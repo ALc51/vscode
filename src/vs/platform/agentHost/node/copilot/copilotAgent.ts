@@ -1406,6 +1406,10 @@ export class CopilotAgent extends Disposable implements IAgent {
 		if (this._configurationService.copilotM365EnabledAtStartup) {
 			this._entraAuthentication = this._register(this._instantiationService.createInstance(CopilotEntraAuthentication));
 			this._register(this._entraAuthentication.onDidRevoke(() => {
+				this._clearLegacySessions({
+					errorType: 'authentication',
+					message: localize('copilotAgent.microsoftAuthenticationWithdrawn', "Microsoft authentication was withdrawn. Sign in again to continue."),
+				});
 				void this._stopClient().catch(error => this._logService.error('[Copilot] Failed to stop runtime after Microsoft authority was withdrawn', error));
 			}));
 		}
@@ -2308,9 +2312,12 @@ export class CopilotAgent extends Disposable implements IAgent {
 		return this._allLiveSessions().filter(session => !session.usesScopedGitHubCredentials && (session.hasActiveTurn || session.hasActiveSubagents)).length;
 	}
 
-	private _clearLegacySessions(): void {
+	private _clearLegacySessions(error?: ErrorInfo): void {
 		for (const [sessionId, entry] of this._chatEntriesBySdkId) {
 			if (!entry.chatSession.usesScopedGitHubCredentials) {
+				if (error) {
+					entry.chatSession.failActiveTurn(error);
+				}
 				this._chatEntriesBySdkId.deleteAndDispose(sessionId);
 			}
 		}

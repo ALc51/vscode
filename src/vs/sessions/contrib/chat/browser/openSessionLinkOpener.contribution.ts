@@ -20,7 +20,7 @@ import { ISessionsManagementService } from '../../../../workbench/contrib/sessio
 import { ISession, SessionStatus } from '../../../../workbench/contrib/sessions/common/session.js';
 import { ISessionsProvidersService } from '../../../../workbench/contrib/sessions/browser/sessionsProvidersService.js';
 import { ISessionsService } from '../../../../workbench/contrib/sessions/browser/sessionsService.js';
-import { getSessionSummaryHoverData } from '../../sessions/browser/sessionHoverContent.js';
+import { getSessionSummaryHoverData } from '../../../../workbench/contrib/sessions/browser/sessionHoverContent.js';
 
 /**
  * Handles `agent-host-session://` links (surfaced by the `create_session` /
